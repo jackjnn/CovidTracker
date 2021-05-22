@@ -13,8 +13,7 @@ import javax.security.auth.callback.Callback
 private const val BASE_URL = "https://covidtracking.com/api/v1/"
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var perStateDailyData: Map<String, List<CovidData>>
+s§    private lateinit var perStateDailyData: Map<String, List<CovidData>>
     private lateinit var nationalDailyData: List<CovidData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
