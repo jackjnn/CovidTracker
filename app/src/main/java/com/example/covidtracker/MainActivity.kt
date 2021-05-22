@@ -14,43 +14,57 @@ private const val BASE_URL = "https://covidtracking.com/api/v1/"
 private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var perStateDailyData: Map<String, List<CovidData>>
     private lateinit var nationalDailyData: List<CovidData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val gson = GsonBuilder().create()
+        val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss")create()
         val retrofit = Retrofit.Builder()
-            .baseUrl("todo")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
         val covidService = retrofit.create(CovidService::class.java)
+
         //fetch the national data
-            covidService.getNationalData().enqueue(object: Callback<List<CovidData>>,
-                retrofit2.Callback<List<CovidData>> {
-                override fun onResponse(
-                    call: Call<List<CovidData>>,
-                    response: Response<List<CovidData>>
-                ) {
-                    Log.i(TAG, "onResponse $response")
-                    val nationalData = response.body()
-                    if (nationalData == null) {
-                        Log.w(TAG, "Did not receive a valid response body")
-                        return
-                    }
-                    nationalDailyData = nationalData.reversed()
-                    Log.i(TAG, "Update graph with national data")
-                    // TODO: Update graph with national data
-                }
+        covidService.getNationalData().enqueue(object: Callback<List<CovidData>> {
+            override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
+                Log.e(TAG, "onFailure $t")
+            }
 
-                override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
-                    Log.e(TAG, "onFailure $t")
+            override fun onResponse(call: Call<List<CovidData>>, response: Response<List<CovidData>>){
+                Log.i(TAG, "onResponse $response")
+                val nationalData = response.body()
+                if (nationalData == null) {
+                    Log.w(TAG, "Did not receive a valid response body")
+                    return
                 }
-
+                nationalDailyData = nationalData.reversed()
+                Log.i(TAG, "Update graph with national data")
+                // TODO: Update graph with national data
+                }
             })
 
-        //fetch the state data
+        //fetch the states data
+        covidService.getStatesData().enqueue(object: Callback<List<CovidData>> {
+            override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
+                Log.e(TAG, "onFailure $t")
+            }
+
+            override fun onResponse(call: Call<List<CovidData>>, response: Response<List<CovidData>>){
+                Log.i(TAG, "onResponse $response")
+                val statesData = response.body()
+                if (statesData == null) {
+                    Log.w(TAG, "Did not receive a valid response body")
+                    return
+                }
+                perStateDailyData = statesData.reversed().groupBy { it.state }
+                Log.i(TAG, "Update spinner with state names")
+                // TODO: Update spinner with state names
+            }
+        })
 
     }
 }

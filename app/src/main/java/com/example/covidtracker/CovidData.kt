@@ -1,10 +1,12 @@
 package com.example.covidtracker
 
+import java.util.*
+
 data class CovidData(
-    val dateChecked: String,
-    val positiveIncrease: String,
-    val negativeIncrease: String,
-    val deathIncrease: String,
+    val dateChecked: Date,
+    val positiveIncrease: Int,
+    val negativeIncrease: Int,
+    val deathIncrease: Int,
     val state: String
 
 )
