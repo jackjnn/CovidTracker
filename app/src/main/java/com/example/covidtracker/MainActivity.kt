@@ -8,6 +8,9 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.security.auth.callback.Callback
 
 class MainActivity : AppCompatActivity(){
@@ -33,7 +36,7 @@ class MainActivity : AppCompatActivity(){
         val covidService = retrofit.create(CovidService::class.java)
 
         //fetch the national data
-        covidService.getNationalData().enqueue(object : Callback<List<CovidData>> {
+        covidService.getNationalData().enqueue( chobject : Callback<List<CovidData>> {
             override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
                 Log.e(TAG, "onFailure $t")
             }
@@ -48,6 +51,7 @@ class MainActivity : AppCompatActivity(){
                 nationalDailyData = nationalData.reversed()
                 Log.i(TAG, "Update graph with national data")
                 // TODO: Update graph with national data
+                updateDisplayWithData(nationalDailyData)
             }
         })
 
@@ -70,5 +74,21 @@ class MainActivity : AppCompatActivity(){
             }
         })
 
+    }
+
+    private fun updateDisplayWithData(dailyData: List<CovidData>) {
+        // create a new SparkAdapter with the data
+        // update radio buttons to select positive cases and max time by default
+        radioButtonPositive.isChecked = true
+        radioButtonMax.isChecked = true
+
+        // Display metric for the most recent date
+        updateInfoForDate(dailyData.last())
+    }
+
+    private fun updateInfoForDate(covidData: CovidData) {
+        tvMetricLabel.text = NumberFormat.getInstance().format(covidData.positiveIncrease)
+        val outputDateFormat = SimpleDateFormat("MM dd, yyyy", Locale.US)
+        tvDateLabel.text = outputDateFormat.format(covidData.dateChecked)
     }
 }
