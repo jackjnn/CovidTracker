@@ -29,6 +29,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    //added this to solve unresolved reference error
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {

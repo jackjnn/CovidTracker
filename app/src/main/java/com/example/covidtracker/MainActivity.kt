@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(){
         val covidService = retrofit.create(CovidService::class.java)
 
         //fetch the national data
-        covidService.getNationalData().enqueue( chobject : Callback<List<CovidData>> {
+        covidService.getNationalData().enqueue(object : retrofit2.Callback<List<CovidData>> {
             override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
                 Log.e(TAG, "onFailure $t")
             }
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(){
         })
 
         //fetch the states data
-        covidService.getStatesData().enqueue(object: Callback<List<CovidData>> {
+        covidService.getStatesData().enqueue(object: retrofit2.Callback<List<CovidData>> {
             override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
                 Log.e(TAG, "onFailure $t")
             }
@@ -78,6 +78,8 @@ class MainActivity : AppCompatActivity(){
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
         // create a new SparkAdapter with the data
+        val adapter = CovidSparkAdapter(dailyData)
+        sparkView.adapter = adapter
         // update radio buttons to select positive cases and max time by default
         radioButtonPositive.isChecked = true
         radioButtonMax.isChecked = true
@@ -92,3 +94,4 @@ class MainActivity : AppCompatActivity(){
         tvDateLabel.text = outputDateFormat.format(covidData.dateChecked)
     }
 }
+
