@@ -10,17 +10,22 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.security.auth.callback.Callback
 
-private const val BASE_URL = "https://covidtracking.com/api/v1/"
-private const val TAG = "MainActivity"
+class MainActivity : AppCompatActivity(){
 
-s§    private lateinit var perStateDailyData: Map<String, List<CovidData>>
+    companion object {
+        const val TAG = "MainActivity"
+        const val BASE_URL = "https://covidtracking.com/api/v1/"
+        const val ALL_STATES = "All (Nationwide)"
+    }
+
+    private lateinit var perStateDailyData: Map<String, List<CovidData>>
     private lateinit var nationalDailyData: List<CovidData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss")create()
+        val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -28,7 +33,7 @@ s§    private lateinit var perStateDailyData: Map<String, List<CovidData>>
         val covidService = retrofit.create(CovidService::class.java)
 
         //fetch the national data
-        covidService.getNationalData().enqueue(object: Callback<List<CovidData>> {
+        covidService.getNationalData().enqueue(object : Callback<List<CovidData>> {
             override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
                 Log.e(TAG, "onFailure $t")
             }
@@ -43,8 +48,8 @@ s§    private lateinit var perStateDailyData: Map<String, List<CovidData>>
                 nationalDailyData = nationalData.reversed()
                 Log.i(TAG, "Update graph with national data")
                 // TODO: Update graph with national data
-                }
-            })
+            }
+        })
 
         //fetch the states data
         covidService.getStatesData().enqueue(object: Callback<List<CovidData>> {
