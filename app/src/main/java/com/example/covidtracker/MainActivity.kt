@@ -86,7 +86,28 @@ class MainActivity : AppCompatActivity(){
                 updateInfoForDate(itemData)
             }
         }
-        // TODO: Respond to radio button selected events
+        // Respond to radio button selected events
+        radioGroupTimeSelection.setOnCheckedChangeListener { _, checkedId ->
+            adapter.daysAgo = when (checkedId) {
+                R.id.radioButtonWeek -> TimeScale.WEEK
+                R.id.radioButtonMonth-> TimeScale.MONTH
+                else -> TimeScale.MAX
+            }
+            adapter.notifyDataSetChanged()
+        }
+        radioGroupMetricSelection.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioButtonNegative-> updateDisplayMetric(Metric.NEGATIVE)
+                R.id.radioButtonPositive-> updateDisplayMetric(Metric.POSITIVE)
+                R.id.radioButtonDeath> updateDisplayMetric(Metric.DEATH)
+            }
+        }
+    }
+
+    private fun updateDisplayMetric(death: Metric): Byte {
+        adapter.metric = metric
+        adapter.notifyDataSetChanged()
+
     }
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
