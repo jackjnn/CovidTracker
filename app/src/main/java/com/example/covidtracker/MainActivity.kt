@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity(){
         const val ALL_STATES = "All (Nationwide)"
     }
 
+    private lateinit var adapter: CovidSparkAdapter
     private lateinit var perStateDailyData: Map<String, List<CovidData>>
     private lateinit var nationalDailyData: List<CovidData>
 
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity(){
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
         // create a new SparkAdapter with the data
-        val adapter = CovidSparkAdapter(dailyData)
+        adapter = CovidSparkAdapter(dailyData)
         sparkView.adapter = adapter
         // update radio buttons to select positive cases and max time by default
         radioButtonPositive.isChecked = true
@@ -89,7 +90,12 @@ class MainActivity : AppCompatActivity(){
     }
 
     private fun updateInfoForDate(covidData: CovidData) {
-        tvMetricLabel.text = NumberFormat.getInstance().format(covidData.positiveIncrease)
+        val numCases = when  (adapter.metric){
+            Metric.NEGATIVE -> covidData.negativeIncrease
+            Metric.POSITIVE -> covidData.positiveIncrease
+            Metric.DEATH -> covidData.deathIncrease
+        }
+        tvMetricLabel.text = NumberFormat.getInstance().format(numCases)
         val outputDateFormat = SimpleDateFormat("MM dd, yyyy", Locale.US)
         tvDateLabel.text = outputDateFormat.format(covidData.dateChecked)
     }
