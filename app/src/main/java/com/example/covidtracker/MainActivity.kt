@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity(){
                     Log.w(TAG, "Did not receive a valid response body")
                     return
                 }
+                setupEventListeners()
                 nationalDailyData = nationalData.reversed()
                 Log.i(TAG, "Update graph with national data")
                 // TODO: Update graph with national data
@@ -75,6 +76,17 @@ class MainActivity : AppCompatActivity(){
             }
         })
 
+    }
+
+    private fun setupEventListeners() {
+        // Add a listener for the user scrubbing on the chart
+        sparkView.isScrubEnabled = true
+        sparkView.setScrubListener { itemData ->
+            if (itemData is CovidData) {
+                updateInfoForDate(itemData)
+            }
+        }
+        // TODO: Respond to radio button selected events
     }
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
