@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -99,14 +100,16 @@ class MainActivity : AppCompatActivity(){
             when (checkedId) {
                 R.id.radioButtonNegative-> updateDisplayMetric(Metric.NEGATIVE)
                 R.id.radioButtonPositive-> updateDisplayMetric(Metric.POSITIVE)
-                R.id.radioButtonDeath> updateDisplayMetric(Metric.DEATH)
+                R.id.radioButtonDeath-> updateDisplayMetric(Metric.DEATH)
             }
         }
     }
 
-    private fun updateDisplayMetric(death: Metric): Byte {
+    private fun updateDisplayMetric(metric: Metric): Byte {
         adapter.metric = metric
         adapter.notifyDataSetChanged()
+
+
 
     }
 
