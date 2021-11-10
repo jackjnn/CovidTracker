@@ -2,7 +2,9 @@ package com.example.covidtracker
 
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity(){
         const val ALL_STATES = "All (Nationwide)"
     }
 
+    private lateinit var currentlyShownData: List<CovidData>
     private lateinit var adapter: CovidSparkAdapter
     private lateinit var perStateDailyData: Map<String, List<CovidData>>
     private lateinit var nationalDailyData: List<CovidData>
@@ -105,15 +108,27 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    private fun updateDisplayMetric(metric: Metric): Byte {
+    private fun updateDisplayMetric(metric: Metric){
+        //update the color of the chart
+        val colorRes = when (metric) {
+            Metric.NEGATIVE -> R.color.colorNegative
+            Metric.POSITIVE -> R.color.colorPositive
+            Metric.DEATH -> R.color.colorDeath
+        }
+        @ColorInt val colorInt = ContextCompat.getColor(this, colorRes)
+        sparkView.lineColor = colorInt
+        tvMetricLabel.setTextColor(colorInt)
+
+        //update the metric on the adapter
         adapter.metric = metric
         adapter.notifyDataSetChanged()
 
-
-
+        //reset number and date shown in the bottom text views
+        updateInfoForDate(currentlyShownData.last())
     }
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
+        currentlyShownData = dailyData
         // create a new SparkAdapter with the data
         adapter = CovidSparkAdapter(dailyData)
         sparkView.adapter = adapter
@@ -122,7 +137,7 @@ class MainActivity : AppCompatActivity(){
         radioButtonMax.isChecked = true
 
         // Display metric for the most recent date
-        updateInfoForDate(dailyData.last())
+        updateDisplayMetric(Metric.POSITIVE)
     }
 
     private fun updateInfoForDate(covidData: CovidData) {
